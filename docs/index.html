@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dead Man's Roll</title>
+<style>
+    body {
+        background: #111;
+        color: #eee;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .game {
+        max-width: 500px;
+        margin: auto;
+        background: #222;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px #000;
+    }
+
+    h1 {
+        color: #f5c542;
+    }
+
+    .dice {
+        font-size: 50px;
+        margin: 20px;
+    }
+
+    button {
+        padding: 12px 20px;
+        margin: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+    }
+
+    .roll {
+        background: #d9534f;
+        color: white;
+    }
+
+    .bank {
+        background: #5cb85c;
+        color: white;
+    }
+
+    .stats {
+        margin-top: 20px;
+        line-height: 1.8;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+    <h1>☠ Dead Man's Roll</h1>
+
+    <div class="dice" id="dice">
+        🎲 🎲
+    </div>
+
+    <p id="message">Roll the dice and test your luck.</p>
+
+    <button class="roll" onclick="rollDice()">Roll</button>
+    <button class="bank" onclick="bank()">Bank Gold</button>
+
+    <div class="stats">
+        <p>Current Run: <span id="current">0</span> gold</p>
+        <p>Banked Total: <span id="banked">0</span> gold</p>
+        <p>Best Run: <span id="best">0</span> gold</p>
+    </div>
+</div>
+
+
+<script>
+
+let current = 0;
+let banked = 0;
+let best = localStorage.getItem("bestRun") || 0;
+
+document.getElementById("best").innerText = best;
+
+function rollDice() {
+
+    let d1 = Math.floor(Math.random() * 6) + 1;
+    let d2 = Math.floor(Math.random() * 6) + 1;
+
+    document.getElementById("dice").innerHTML =
+        "🎲 " + d1 + " &nbsp; 🎲 " + d2;
+
+    // Death roll
+    if (d1 === d2) {
+
+        document.getElementById("message").innerText =
+            "☠ DOUBLE ROLLED! Your run is dead. Lost " + current + " gold.";
+
+        current = 0;
+
+    } else {
+
+        let reward = d1 + d2;
+
+        current += reward;
+
+        document.getElementById("message").innerText =
+            "Safe! You gained " + reward + " gold.";
+
+    }
+
+    update();
+}
+
+
+function bank() {
+
+    if (current > 0) {
+
+        banked += current;
+
+        if (banked > best) {
+            best = banked;
+            localStorage.setItem("bestRun", best);
+        }
+
+        document.getElementById("message").innerText =
+            "You escaped with your winnings!";
+
+        current = 0;
+
+    }
+
+    update();
+}
+
+
+function update() {
+    document.getElementById("current").innerText = current;
+    document.getElementById("banked").innerText = banked;
+    document.getElementById("best").innerText = best;
+}
+
+</script>
+
+</body>
+</html>
