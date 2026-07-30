@@ -6,14 +6,17 @@
     <title>Dead Man's Roll</title>
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --gold: #d4af37;
-            --red: #8b0000;
+            --bg: #0a0a0f;
+            --card: #16161e;
+            --gold: #ffd700;
+            --gold-dim: #b89b00;
+            --red: #ff2a2a;
+            --green: #00e676;
             --text: #e0e0e0;
+            --text-dim: #8888aa;
         }
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             display: flex;
@@ -23,63 +26,90 @@
             margin: 0;
             padding: 20px;
         }
-        h1 { color: var(--gold); text-shadow: 2px 2px 4px #000; }
+        h1 { 
+            color: var(--gold); 
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); 
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        .subtitle { color: var(--text-dim); margin-bottom: 30px; font-size: 0.9em; }
+        
         .card {
             background: var(--card);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             margin-bottom: 20px;
-            border: 1px solid #333;
+            border: 1px solid #2a2a35;
         }
-        .stats { display: flex; justify-content: space-around; text-align: center; }
-        .stat-val { font-size: 1.5em; color: var(--gold); font-weight: bold; }
+        .card h3 { margin-top: 0; color: var(--gold); border-bottom: 1px solid #2a2a35; padding-bottom: 10px; }
+        
+        .stats { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 15px; 
+            text-align: center; 
+            margin-bottom: 20px;
+            background: #0f0f14;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .stat-label { font-size: 0.8em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 1.6em; color: var(--gold); font-weight: bold; margin-top: 5px; }
+        .stat-val.danger { color: var(--red); }
         
         /* 3D Dice Styles */
-        .dice-container {
+        .dice-area {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
             perspective: 800px;
-            width: 100px;
-            height: 100px;
-            margin: 30px auto;
+        }
+        .dice-container {
+            width: 80px;
+            height: 80px;
         }
         .dice {
             width: 100%;
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 2.5s cubic-bezier(0.15, 0.9, 0.3, 1);
         }
         .face {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: #f4f4f4;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
             border: 2px solid #333;
-            border-radius: 10px;
+            border-radius: 12px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            padding: 10px;
+            padding: 8px;
             box-sizing: border-box;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
         .dot {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             background: #111;
             border-radius: 50%;
             align-self: center;
             justify-self: center;
             display: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
         /* Face Positions */
-        .face-1 { transform: translateZ(50px); }
-        .face-2 { transform: rotateY(90deg) translateZ(50px); }
-        .face-3 { transform: rotateX(90deg) translateZ(50px); }
-        .face-4 { transform: rotateX(-90deg) translateZ(50px); }
-        .face-5 { transform: rotateY(-90deg) translateZ(50px); }
-        .face-6 { transform: rotateY(180deg) translateZ(50px); }
+        .face-1 { transform: translateZ(40px); }
+        .face-2 { transform: rotateY(90deg) translateZ(40px); }
+        .face-3 { transform: rotateX(90deg) translateZ(40px); }
+        .face-4 { transform: rotateX(-90deg) translateZ(40px); }
+        .face-5 { transform: rotateY(-90deg) translateZ(40px); }
+        .face-6 { transform: rotateY(180deg) translateZ(40px); }
 
         /* Dot Layouts */
         .face-1 .dot:nth-child(5) { display: block; }
@@ -93,96 +123,189 @@
             background: var(--red);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1.1em;
-            border-radius: 5px;
+            padding: 14px;
+            font-size: 1em;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: bold;
-            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 42, 42, 0.3);
         }
-        button:hover { background: #a00000; }
-        button:disabled { background: #555; cursor: not-allowed; }
+        button:hover:not(:disabled) { background: #ff4444; transform: translateY(-2px); }
+        button:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; transform: none; }
         
-        .instructions { font-size: 0.9em; color: #aaa; line-height: 1.5; }
-        .instructions code { background: #333; padding: 2px 5px; border-radius: 3px; color: var(--gold); }
-        #log { max-height: 100px; overflow-y: auto; font-size: 0.8em; color: #888; margin-top: 10px; }
+        .btn-bank { background: var(--gold); color: #000; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
+        .btn-bank:hover:not(:disabled) { background: #ffe033; }
+        .btn-deposit { background: var(--green); color: #000; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); }
+        .btn-deposit:hover:not(:disabled) { background: #33ff99; }
+
+        .instructions { font-size: 0.9em; color: var(--text-dim); line-height: 1.6; }
+        .instructions code { 
+            background: #2a2a35; 
+            padding: 3px 8px; 
+            border-radius: 4px; 
+            color: var(--gold); 
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+        .instructions strong { color: var(--text); }
+        
+        #log { 
+            max-height: 120px; 
+            overflow-y: auto; 
+            font-size: 0.85em; 
+            color: var(--text-dim); 
+            margin-top: 15px; 
+            padding: 10px;
+            background: #0f0f14;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        #log div { margin-bottom: 4px; border-bottom: 1px solid #1a1a25; padding-bottom: 4px; }
+        #log div:last-child { border-bottom: none; color: var(--gold); }
+
+        /* Admin Table */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; }
+        .admin-table th { text-align: left; color: var(--text-dim); padding: 8px; border-bottom: 1px solid #2a2a35; }
+        .admin-table td { padding: 8px; border-bottom: 1px solid #1a1a25; }
+        .admin-table tr:last-child td { border-bottom: none; }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0f0f14;
+            border: 1px solid #2a2a35;
+            color: white;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        input:focus { outline: none; border-color: var(--gold); }
+        
+        .hidden { display: none !important; }
+        .entry-fee { color: var(--red); font-size: 0.85em; text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <h1>☠ Dead Man's Roll ☠</h1>
+    <h1>☠ DEAD MAN'S ROLL ☠</h1>
+    <div class="subtitle">Push your luck. Bank before the doubles.</div>
 
     <!-- API Key Verification -->
     <div class="card" id="auth-card">
-        <h3>Verify Identity</h3>
-        <p class="instructions">Enter your Torn API key to play. This prevents cheating and verifies your identity.</p>
-        <input type="text" id="apiKeyInput" placeholder="Torn API Key" style="width: 100%; padding: 10px; margin: 10px 0; background: #333; border: 1px solid #555; color: white;">
-        <button onclick="verifyKey()">Verify & Save</button>
-        <div id="auth-status"></div>
+        <h3>🔑 Verify Identity</h3>
+        <p class="instructions">Enter your Torn API key to play. A <strong>Public</strong> key is sufficient for players. The owner's <strong>Full Access</strong> key unlocks the Admin Panel.</p>
+        <input type="text" id="apiKeyInput" placeholder="Torn API Key">
+        <button onclick="verifyKey()">Verify & Enter</button>
+        <div id="auth-status" style="margin-top:10px; font-size:0.9em;"></div>
     </div>
 
     <!-- Main Game -->
-    <div class="card" id="game-card" style="display: none;">
+    <div class="card hidden" id="game-card">
         <div class="stats">
-            <div><div class="stat-val" id="currentRun">0</div>Current Run</div>
-            <div><div class="stat-val" id="banked">0</div>Banked</div>
-            <div><div class="stat-val" id="bestRun">0</div>Best Run</div>
-        </div>
-
-        <div class="dice-container">
-            <div class="dice" id="dice">
-                <!-- 6 Faces with 9 dot slots each -->
-                <div class="face face-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <div class="face face-2"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <div class="face face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <div class="face face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <div class="face face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <div class="face face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            <div>
+                <div class="stat-label">Current Run</div>
+                <div class="stat-val" id="currentRun">0</div>
+            </div>
+            <div>
+                <div class="stat-label">Banked</div>
+                <div class="stat-val" id="banked">0</div>
+            </div>
+            <div>
+                <div class="stat-label">Best Run</div>
+                <div class="stat-val" id="bestRun">0</div>
             </div>
         </div>
 
+        <div class="dice-area">
+            <div class="dice-container">
+                <div class="dice" id="dice1">
+                    <div class="face face-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-2"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                </div>
+            </div>
+            <div class="dice-container">
+                <div class="dice" id="dice2">
+                    <div class="face face-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-2"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="face face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="entry-fee" id="entryFeeText">Entry Fee: 100 Gold to start a run</div>
         <button id="rollBtn" onclick="rollDice()">Roll Dice</button>
-        <button onclick="bankGold()" style="background: var(--gold); color: black;">Bank Current Run</button>
+        <button class="btn-bank" id="bankBtn" onclick="bankGold()" disabled>Bank Current Run</button>
         <div id="log"></div>
     </div>
 
-    <!-- Deposit / Withdraw Instructions -->
+    <!-- Admin Panel -->
+    <div class="card hidden" id="admin-card">
+        <h3>👑 Admin Panel</h3>
+        <button onclick="loadAdminData()" style="background: #444; margin-bottom: 10px;">Refresh User Data</button>
+        <table class="admin-table">
+            <thead><tr><th>Player</th><th>ID</th><th>Banked Gold</th></tr></thead>
+            <tbody id="adminTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Instructions & Economy -->
     <div class="card">
-        <h3>💰 Deposit & Withdraw</h3>
+        <h3>📜 How to Play & Economy</h3>
         <div class="instructions">
-            <p><strong>Deposit:</strong> Send <strong>1 Xanax</strong> to <code>YOUR_TORN_NAME</code> with the message <code>dmanroll</code>. Then click the button below to claim your <strong>100 Gold</strong>.</p>
-            <button onclick="checkDeposit()" style="background: #28a745;">Verify Deposit (+100 Gold)</button>
+            <p><strong>1. Deposit:</strong> Send <strong>1 Small First Aid Kit</strong> to <code>HappyOkran[4427995]</code> with the exact message <code>dmanroll</code>. Click below to auto-verify and receive <strong>100 Game Gold</strong>.</p>
+            <button class="btn-deposit" onclick="checkDeposit()">Verify Deposit (+100 Gold)</button>
             
-            <hr style="border-color: #444; margin: 15px 0;">
+            <hr style="border-color: #2a2a35; margin: 20px 0;">
             
-            <p><strong>Withdraw:</strong> Send a <strong>Mail</strong> to <code>YOUR_TORN_NAME</code> with the message <code>withdraw [amount]</code> (e.g., <code>withdraw 500</code>). The owner will manually send the gold/items to you.</p>
+            <p><strong>2. The Game:</strong> Costs <strong>100 Gold</strong> to start a run. Each roll adds <code>(Die 1 + Die 2) × 5</code> to your Current Run. You can roll repeatedly without paying again.</p>
+            <p><strong>3. The Danger:</strong> If you roll <strong>DOUBLES</strong>, you lose your entire Current Run and the run ends!</p>
+            <p><strong>4. Bank:</strong> Secure your Current Run to your permanent Banked Total at any time before you hit doubles.</p>
+            
+            <hr style="border-color: #2a2a35; margin: 20px 0;">
+            
+            <p><strong>5. Withdraw:</strong> Send a <strong>Mail</strong> to <code>HappyOkran[4427995]</code> with the message <code>withdraw [amount]</code> (e.g., <code>withdraw 500</code>). The owner will manually send you the rewards in-game.</p>
         </div>
     </div>
 
     <script>
         // CONFIGURATION
         const VAL_URL = "https://unboundddestiny--3da5d5f68c6211f1836f1607ee4eb77e.web.val.run"; // REPLACE WITH YOUR VAL URL
-        const TORN_NAME = "HappyOkran[4427995]"; // REPLACE WITH YOUR TORN NAME
+        const TORN_NAME = "HappyOkran[4427995]";
 
         // STATE
         let state = {
             apiKey: localStorage.getItem('dmanroll_key') || '',
+            playerId: localStorage.getItem('dmanroll_id') || '',
             playerName: localStorage.getItem('dmanroll_name') || '',
-            currentRun: parseInt(localStorage.getItem('dmanroll_current')) || 0,
             banked: parseInt(localStorage.getItem('dmanroll_banked')) || 0,
+            currentRun: parseInt(localStorage.getItem('dmanroll_current')) || 0,
             bestRun: parseInt(localStorage.getItem('dmanroll_best')) || 0,
+            isActiveRun: localStorage.getItem('dmanroll_active') === 'true',
+            isAdmin: localStorage.getItem('dmanroll_admin') === 'true',
             isRolling: false
         };
 
-        // INIT
         window.onload = () => {
             if (state.apiKey) {
                 document.getElementById('apiKeyInput').value = state.apiKey;
-                document.getElementById('auth-card').style.display = 'none';
-                document.getElementById('game-card').style.display = 'block';
+                document.getElementById('auth-card').classList.add('hidden');
+                document.getElementById('game-card').classList.remove('hidden');
+                if (state.isAdmin) document.getElementById('admin-card').classList.remove('hidden');
                 updateUI();
+                log(`Welcome back, ${state.playerName}.`);
             }
         };
 
@@ -191,51 +314,81 @@
             document.getElementById('banked').innerText = state.banked;
             document.getElementById('bestRun').innerText = state.bestRun;
             
-            localStorage.setItem('dmanroll_current', state.currentRun);
+            const rollBtn = document.getElementById('rollBtn');
+            const bankBtn = document.getElementById('bankBtn');
+            const feeText = document.getElementById('entryFeeText');
+
+            if (state.isActiveRun) {
+                feeText.innerText = "Run Active! Roll again or Bank your gold.";
+                feeText.style.color = "var(--green)";
+                bankBtn.disabled = false;
+            } else {
+                if (state.banked < 100) {
+                    feeText.innerText = "⚠️ Insufficient Funds: You need 100 Gold to start a run.";
+                    feeText.style.color = "var(--red)";
+                    rollBtn.disabled = true;
+                } else {
+                    feeText.innerText = "Ready: 100 Gold will be deducted to start.";
+                    feeText.style.color = "var(--gold)";
+                    rollBtn.disabled = false;
+                }
+                bankBtn.disabled = true;
+            }
+
             localStorage.setItem('dmanroll_banked', state.banked);
+            localStorage.setItem('dmanroll_current', state.currentRun);
             localStorage.setItem('dmanroll_best', state.bestRun);
+            localStorage.setItem('dmanroll_active', state.isActiveRun);
         }
 
         function log(msg) {
             const el = document.getElementById('log');
-            el.innerHTML = `<div>> ${msg}</div>` + el.innerHTML;
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            el.innerHTML = `<div>[${time}] ${msg}</div>` + el.innerHTML;
         }
 
-        // 1. PRECHECK: VERIFY API KEY
         async function verifyKey() {
             const key = document.getElementById('apiKeyInput').value.trim();
             if (!key) return alert("Please enter an API key");
             
-            document.getElementById('auth-status').innerText = "Verifying...";
+            document.getElementById('auth-status').innerText = "Verifying with Torn API...";
             try {
                 const res = await fetch(`${VAL_URL}/verify?key=${key}`);
                 const data = await res.json();
                 
                 if (data.success) {
                     state.apiKey = key;
+                    state.playerId = data.id;
                     state.playerName = data.name;
+                    state.isAdmin = data.isAdmin;
+                    
                     localStorage.setItem('dmanroll_key', key);
+                    localStorage.setItem('dmanroll_id', data.id);
                     localStorage.setItem('dmanroll_name', data.name);
-                    document.getElementById('auth-card').style.display = 'none';
-                    document.getElementById('game-card').style.display = 'block';
-                    log(`Welcome, ${data.name}!`);
+                    localStorage.setItem('dmanroll_admin', data.isAdmin);
+                    
+                    document.getElementById('auth-card').classList.add('hidden');
+                    document.getElementById('game-card').classList.remove('hidden');
+                    if (data.isAdmin) document.getElementById('admin-card').classList.remove('hidden');
+                    
+                    log(`Verified as ${data.name}. ${data.isAdmin ? 'Admin privileges granted.' : ''}`);
+                    updateUI();
                 } else {
                     document.getElementById('auth-status').innerText = "Error: " + data.error;
                 }
             } catch (e) {
-                document.getElementById('auth-status').innerText = "Connection error.";
+                document.getElementById('auth-status').innerText = "Connection error. Check Val URL.";
             }
         }
 
-        // 2. SECURE ROLL
         async function rollDice() {
             if (state.isRolling) return;
             state.isRolling = true;
             document.getElementById('rollBtn').disabled = true;
-            log("Rolling...");
+            document.getElementById('bankBtn').disabled = true;
+            log("Rolling dice...");
 
             try {
-                // Fetch secure random number from backend
                 const res = await fetch(`${VAL_URL}/roll?key=${state.apiKey}`);
                 const data = await res.json();
                 
@@ -245,8 +398,13 @@
                     return;
                 }
 
-                const roll = data.roll;
-                animateDice(roll);
+                // Update banked if it was a new run deduction
+                if (data.banked !== undefined) {
+                    state.banked = data.banked;
+                    state.isActiveRun = true;
+                }
+
+                animateDice(data.die1, data.die2);
             } catch (e) {
                 log("Failed to contact server.");
                 resetRollState();
@@ -255,47 +413,50 @@
 
         function resetRollState() {
             state.isRolling = false;
-            document.getElementById('rollBtn').disabled = false;
+            updateUI(); // Re-evaluates button states
         }
 
-        // 3. 3D DICE ANIMATION
-        function animateDice(targetRoll) {
-            const dice = document.getElementById('dice');
+        function animateDice(target1, target2) {
+            const dice1 = document.getElementById('dice1');
+            const dice2 = document.getElementById('dice2');
             
-            // Calculate final rotation to land on the correct face
-            // We add extra spins (1080deg = 3 full spins) to make it look like it's rolling
-            const spins = 1080; 
-            let finalX = 0, finalY = 0;
-
-            switch(targetRoll) {
-                case 1: finalX = 0; finalY = 0; break;
-                case 2: finalX = 0; finalY = -90; break;
-                case 3: finalX = -90; finalY = 0; break;
-                case 4: finalX = 90; finalY = 0; break;
-                case 5: finalX = 0; finalY = 90; break;
-                case 6: finalX = 180; finalY = 0; break;
+            function getRotation(roll) {
+                let x = 0, y = 0;
+                switch(roll) {
+                    case 1: x = 0; y = 0; break;
+                    case 2: x = 0; y = -90; break;
+                    case 3: x = -90; y = 0; break;
+                    case 4: x = 90; y = 0; break;
+                    case 5: x = 0; y = 90; break;
+                    case 6: x = 180; y = 0; break;
+                }
+                const randX = (Math.floor(Math.random() * 3) + 3) * 360;
+                const randY = (Math.floor(Math.random() * 3) + 3) * 360;
+                return `rotateX(${x + randX}deg) rotateY(${y + randY}deg)`;
             }
 
-            // Apply random extra spins so it doesn't look identical every time
-            const randX = (Math.floor(Math.random() * 3) + 2) * 360;
-            const randY = (Math.floor(Math.random() * 3) + 2) * 360;
+            dice1.style.transform = getRotation(target1);
+            dice2.style.transform = getRotation(target2);
 
-            dice.style.transform = `rotateX(${finalX + randX}deg) rotateY(${finalY + randY}deg)`;
-
-            // Wait for animation to finish (3s matches CSS transition)
             setTimeout(() => {
-                processRollResult(targetRoll);
-            }, 3100);
+                processRollResult(target1, target2);
+            }, 2600);
         }
 
-        function processRollResult(roll) {
-            if (roll === 1) {
-                log(`Rolled 1 ☠. Dead Man! Current run lost.`);
+        function processRollResult(die1, die2) {
+            const isDouble = (die1 === die2);
+            const sum = die1 + die2;
+            
+            if (isDouble) {
+                log(`☠️ DOUBLES (${die1}-${die2})! Dead Man! Current run lost.`);
                 state.currentRun = 0;
+                state.isActiveRun = false;
+                // Notify backend to clear run
+                fetch(`${VAL_URL}/bank?key=${state.apiKey}&amount=0`);
             } else {
-                const winnings = roll * 10;
+                const winnings = sum * 5;
                 state.currentRun += winnings;
-                log(`Rolled ${roll}. +${winnings} Gold!`);
+                log(`Rolled ${die1}-${die2}. +${winnings} Gold added to run.`);
             }
             
             if (state.currentRun > state.bestRun) {
@@ -303,33 +464,60 @@
             }
             
             updateUI();
-            resetRollState();
         }
 
-        function bankGold() {
+        async function bankGold() {
             if (state.currentRun === 0) return log("Nothing to bank.");
-            state.banked += state.currentRun;
-            log(`Banked ${state.currentRun} Gold.`);
-            state.currentRun = 0;
-            updateUI();
+            
+            log("Banking gold...");
+            try {
+                const res = await fetch(`${VAL_URL}/bank?key=${state.apiKey}&amount=${state.currentRun}`);
+                const data = await res.json();
+                if (data.success) {
+                    state.banked = data.banked;
+                    log(`✅ Successfully banked ${state.currentRun} Gold.`);
+                    state.currentRun = 0;
+                    state.isActiveRun = false;
+                    updateUI();
+                }
+            } catch (e) {
+                log("Failed to contact server to bank.");
+            }
         }
 
-        // 4. DEPOSIT CHECK
         async function checkDeposit() {
-            log("Checking Torn mail for deposit...");
+            log("Checking Torn mail for Small First Aid Kit deposit...");
             try {
-                const res = await fetch(`${VAL_URL}/deposit?key=${state.apiKey}`);
+                const res = await fetch(`${VAL_URL}/deposit?key=${state.apiKey}&playerId=${state.playerId}`);
                 const data = await res.json();
                 
                 if (data.success) {
-                    state.banked += 100;
+                    state.banked += 100; // Frontend fallback, backend also does this
                     updateUI();
-                    log("Deposit verified! +100 Gold added to bank.");
+                    log("✅ " + data.message);
                 } else {
-                    log("Deposit failed: " + data.message);
+                    log("❌ " + data.message);
                 }
             } catch (e) {
                 log("Error checking deposit.");
+            }
+        }
+
+        async function loadAdminData() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+            try {
+                const res = await fetch(`${VAL_URL}/admin?key=${state.apiKey}`);
+                const data = await res.json();
+                if (data.success) {
+                    tbody.innerHTML = data.users.map(u => 
+                        `<tr><td>${u.name}</td><td>${u.id}</td><td style="color:var(--gold)">${u.banked}</td></tr>`
+                    ).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="3" style="color:var(--red)">${data.error}</td></tr>`;
+                }
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="3" style="color:var(--red)">Failed to load</td></tr>';
             }
         }
     </script>
